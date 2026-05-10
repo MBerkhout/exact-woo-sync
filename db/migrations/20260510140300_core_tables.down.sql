@@ -1,0 +1,14 @@
+DROP TABLE IF EXISTS public.content_hashes;
+DROP TABLE IF EXISTS public.suppression_window;
+DROP TABLE IF EXISTS public.dead_letter_jobs;
+DROP TABLE IF EXISTS public.sync_logs;
+DROP TABLE IF EXISTS public.sync_jobs;
+DROP TABLE IF EXISTS public.webhook_deliveries;
+DROP TABLE IF EXISTS public.entity_links;
+DROP TABLE IF EXISTS public.connector_pairs;
+DROP TABLE IF EXISTS public.connector_secrets;
+DROP TABLE IF EXISTS public.connectors;
+DROP TABLE IF EXISTS public.tenant_invites;
+DROP TABLE IF EXISTS public.tenant_members;
+DROP TABLE IF EXISTS public.tenants;
+DROP TYPE IF EXISTS public.tenant_role;
