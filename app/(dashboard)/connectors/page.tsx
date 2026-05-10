@@ -1,7 +1,6 @@
 import Link from "next/link";
 
-import { requireTenant } from "@/lib/auth/requireTenant";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { AddExactConnectorDialog } from "@/components/connectors/add-exact-connector-dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -18,6 +17,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { requireTenant } from "@/lib/auth/requireTenant";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
 export default async function ConnectorsPage() {
@@ -29,19 +30,24 @@ export default async function ConnectorsPage() {
     .eq("tenant_id", tenantId)
     .order("created_at", { ascending: false });
 
+  const isAdmin = role === "admin";
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Connectors</h1>
           <p className="text-muted-foreground text-sm">
-            WooCommerce (REST keys + signed webhooks) is available; Exact Online remains Phase 3.
+            WooCommerce (REST keys + signed webhooks) and Exact Online (OAuth per region).
           </p>
         </div>
-        {role === "admin" ? (
-          <Link className={cn(buttonVariants())} href="/connectors/new">
-            Add connector
-          </Link>
+        {isAdmin ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <Link className={cn(buttonVariants())} href="/connectors/new">
+              Add WooCommerce
+            </Link>
+            <AddExactConnectorDialog />
+          </div>
         ) : (
           <Button type="button" disabled>
             Add connector
@@ -77,7 +83,7 @@ export default async function ConnectorsPage() {
                 connectors!.map((c) => (
                   <TableRow key={c.id}>
                     <TableCell className="font-medium">
-                      {role === "admin" ? (
+                      {isAdmin ? (
                         <Link className="underline" href={`/connectors/${c.id}`}>
                           {c.name}
                         </Link>
@@ -95,6 +101,12 @@ export default async function ConnectorsPage() {
           </Table>
         </CardContent>
       </Card>
+
+      {!isAdmin ? (
+        <p className="text-muted-foreground text-xs">
+          Ask a tenant admin to add connectors or reconnect OAuth.
+        </p>
+      ) : null}
     </div>
   );
 }

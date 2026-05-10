@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ExactConnectorOAuthForm } from "@/components/connectors/exact-connector-oauth-form";
 import { createTenant } from "@/lib/actions/tenant";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -19,7 +20,8 @@ export default function OnboardingPage() {
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">Onboarding</h1>
         <p className="text-muted-foreground mt-2 text-sm">
-          Phase 1 skeleton: create a tenant, then continue with connector wizard placeholders.
+          Create a tenant, then configure connectors — WooCommerce (REST keys) and Exact Online OAuth
+          for tenant admins.
         </p>
       </div>
 
@@ -55,37 +57,35 @@ export default function OnboardingPage() {
         </CardContent>
       </Card>
 
-      <Card className="opacity-70">
+      <Card>
         <CardHeader>
           <CardTitle>3. Connect WooCommerce</CardTitle>
           <CardDescription>
-            Consumer key/secret + webhook subscription (Phase 2).
+            Consumer key/secret + signed webhooks via the connectors dashboard (admin-only).
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Link
-            href="/connectors"
-            className={cn(buttonVariants({ variant: "outline" }))}
-          >
+          <Link href="/connectors" className={cn(buttonVariants({ variant: "outline" }))}>
             Open connectors
           </Link>
         </CardContent>
       </Card>
 
-      <Card className="opacity-70">
+      <Card>
         <CardHeader>
           <CardTitle>4. Connect Exact Online</CardTitle>
           <CardDescription>
-            OAuth per region + prod/test toggle (Phase 3).
+            Region-specific OAuth (production) or sandbox on the NL stack only. Requires tenant
+            admin.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <Link
-            href="/connectors"
-            className={cn(buttonVariants({ variant: "outline" }))}
-          >
-            Open connectors
-          </Link>
+        <CardContent className="space-y-4">
+          <ExactConnectorOAuthForm />
+          <div>
+            <Link href="/connectors" className={cn(buttonVariants({ variant: "outline" }))}>
+              Open connectors
+            </Link>
+          </div>
         </CardContent>
       </Card>
 
@@ -97,10 +97,7 @@ export default function OnboardingPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Link
-            href="/pairs"
-            className={cn(buttonVariants({ variant: "outline" }))}
-          >
+          <Link href="/pairs" className={cn(buttonVariants({ variant: "outline" }))}>
             Open pairs
           </Link>
         </CardContent>

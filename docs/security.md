@@ -10,6 +10,7 @@
 |------------|----------|---------|
 | Dashboard / logs / connectors / pairs (read) | yes | yes |
 | Connector secrets ciphertext rows | no | yes (`connector_secrets`) |
+| `oauth_states` rows | no | yes |
 | Tenant invites (`tenant_invites`) | no | yes |
 
 Server-side mutations that bypass RLS intentionally use `SUPABASE_SERVICE_ROLE_KEY` **only** inside trusted Server Actions / Route Handlers (`lib/supabase/admin.ts`, webhook enqueue path via `DATABASE_URL`).
@@ -24,6 +25,7 @@ Policies defined in `db/migrations/20260510140400_rls.sql`:
 ## Secrets
 
 - Connector tokens: libsodium `crypto_secretbox_easy` (`lib/crypto/secrets.ts`, key `SECRETS_KEY` — 64 hex chars = 32 bytes).
+- **Exact Online:** access + refresh tokens and metadata use typed payload `ExactSecretsV1` (`v: 1`, `accessTokenExpiresAt`, `division`, `region`, `env`) in `connector_secrets`; `EXACT_CLIENT_ID` / `EXACT_CLIENT_SECRET` stay server env only.
 - Env vars: see `.env.example`.
 
 ## Webhooks

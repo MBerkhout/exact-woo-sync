@@ -39,6 +39,12 @@ npm run migrate:help
 3. In WooCommerce, create a webhook pointing at `https://<app-host>/api/webhooks/woocommerce/<connector_uuid>` with the same secret; deliver JSON for the topics you need (`order.*`, `product.*`, etc.).
 4. Use **Test webhook** (admin) to POST a synthetic signed payload and confirm `202` + an inbound queue row (`pgmq` `sync.inbound`). Cron `GET /api/cron/drain-queue` drains Woo inbound → `entity_links` + `sync.outbound` jobs; Woo-target outbound messages execute REST writes in the same drain pass.
 
+## Exact Online app registration
+
+- Create/update an app in the **Exact App Centre** for the same **region** your customers use; copy `EXACT_CLIENT_ID` / `EXACT_CLIENT_SECRET`.
+- Set the redirect URI to `{APP_BASE_URL}/api/oauth/exact/callback` (must match exactly).
+- Copy the app **webhook secret** into `EXACT_WEBHOOK_SECRET` (server env); it is mirrored into `connectors.config.webhookSecret` on successful OAuth so deliveries verify per tenant instance.
+
 ## Dead-letter replay
 
 Phase 8 — UI will call a replay action inserting back into `pgmq` / `sync_jobs`.

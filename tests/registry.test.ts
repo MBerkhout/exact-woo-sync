@@ -1,15 +1,15 @@
 import { describe, expect, it } from "vitest";
 
-import { woocommerceConnector } from "@/connectors/woocommerce";
 import {
   getConnector,
   isContractCompatible,
   listRegisteredKinds,
 } from "@/connectors/registry";
+import { woocommerceConnector } from "@/connectors/woocommerce";
 import { CONTRACT_VERSION } from "@/connectors/_contract/v1";
 
 describe("connector registry", () => {
-  it("lists woo + exact stubs", () => {
+  it("lists woo + exact", () => {
     expect(listRegisteredKinds().sort()).toEqual(["exact-online", "woocommerce"]);
   });
 
@@ -24,5 +24,12 @@ describe("connector registry", () => {
         new Headers({ "X-WC-Webhook-Delivery-ID": "abc123" }),
       ),
     ).toBe("abc123");
+  });
+
+  it("loads exact-online module at v1", () => {
+    const c = getConnector("exact-online");
+    expect(c?.manifest.kind).toBe("exact-online");
+    expect(c?.manifest.moduleVersion).toBe("1.0.0");
+    expect(isContractCompatible(c!.manifest.contractVersion, CONTRACT_VERSION)).toBe(true);
   });
 });

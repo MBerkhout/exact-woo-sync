@@ -153,6 +153,34 @@ export interface Database {
         };
         Relationships: [];
       };
+      oauth_states: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          user_id: string;
+          state: string;
+          connector_id: string;
+          region: string;
+          env: string;
+          created_at: string;
+          expires_at: string;
+        };
+        Insert: {
+          id?: string;
+          tenant_id: string;
+          user_id: string;
+          state: string;
+          connector_id: string;
+          region: string;
+          env: string;
+          created_at?: string;
+          expires_at: string;
+        };
+        Update: {
+          expires_at?: string;
+        };
+        Relationships: [];
+      };
       sync_logs: {
         Row: {
           id: string;

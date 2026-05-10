@@ -20,6 +20,7 @@ Maintained alongside SQL migrations in `db/migrations/`. Regenerate/extend this 
 | `suppression_window` | Loop prevention: ignore inbound writes until `until`. |
 | `content_hashes` | Loop prevention: skip when payload hash unchanged. |
 | `connector_cursors` | One row per connector (`entity_kind` + opaque `cursor` token for polling — Woo `modified_after` baseline). |
+| `oauth_states` | Short-lived Exact OAuth `state` + connector binding (**admin-only** RLS). |
 
 **Indexes:** `entity_links_pair_kind_source_idx` unique on `(pair_id, entity_kind, source_id)` supports idempotent upserts from inbound workers.
 

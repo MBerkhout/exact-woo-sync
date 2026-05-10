@@ -10,12 +10,13 @@
 - **Core contract:** `connectors/_contract/v1.ts` exports `CONTRACT_VERSION` (semver). Connectors declare `manifest.contractVersion`; registry rejects major mismatches (`connectors/registry.ts`).
 - **Module semver:** Each connector exposes `manifest.moduleVersion`; tenants pin connector module versions on `connectors.version` (enforced in later phases).
 
-## Key routes (Phase 1)
+## Key routes
 
 | Area | Path |
 |------|------|
 | Webhooks | `/api/webhooks/woocommerce/[connectorId]`, `/api/webhooks/exact/[connectorId]` |
-| OAuth stubs | `/api/oauth/*/callback` |
+| Exact OAuth | `GET /api/oauth/exact/start`, `GET /api/oauth/exact/callback` |
+| Woo stubs | `/api/oauth/woocommerce/callback` |
 | Cron drain | `/api/cron/drain-queue` |
 
 ## Migrations

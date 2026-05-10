@@ -1,6 +1,6 @@
-# Exact ↔ Woo middleware (Phases 1–2 Woo)
+# Exact ↔ Woo middleware (Phases 2–3 — Woo + Exact connectors)
 
-Multi-tenant SaaS shell syncing **WooCommerce** (full REST + signed webhooks + workers) ↔ **Exact Online** (Phase 3) with strict tenant isolation (Supabase RLS), connector contracts, pgmq-backed queues, PII-safe logging, and onboarding placeholders.
+Multi-tenant SaaS shell syncing **WooCommerce** (REST + signed webhooks + workers) ↔ **Exact Online** (OAuth, webhooks, entity APIs) with strict tenant isolation (Supabase RLS), connector contracts, pgmq-backed queues, PII-safe logging, and onboarding.
 
 ## Docs
 
