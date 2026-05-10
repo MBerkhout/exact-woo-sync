@@ -1,0 +1,3 @@
+-- Rollback extensions only if safe for your environment (often skipped in prod).
+-- DROP EXTENSION IF EXISTS "pgmq";
+-- DROP EXTENSION IF EXISTS "pgcrypto";
