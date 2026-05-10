@@ -1,5 +1,6 @@
-import { createHash } from "crypto";
+import { createHash } from "node:crypto";
 
+import type { EntityKind } from "@/connectors/_contract/v1";
 import { getConnector } from "@/connectors/registry";
 import { getAdminSql } from "@/lib/db/postgres";
 import { recordWebhookDelivery } from "@/lib/webhooks/idempotency";
@@ -12,6 +13,25 @@ function safeJson(buf: Buffer): unknown {
   } catch {
     return { _raw: buf.toString("utf8") };
   }
+}
+
+function parseInboundEnvelope(
+  normalized: unknown,
+): { topic: string; entityKind: EntityKind; entityId: string; payload: unknown } | null {
+  if (!normalized || typeof normalized !== "object") return null;
+  const o = normalized as Record<string, unknown>;
+  const topic = o.topic;
+  const entityKind = o.entityKind;
+  const entityId = o.entityId;
+  if (typeof topic !== "string" || !topic.length) return null;
+  if (typeof entityKind !== "string" || !entityKind.length) return null;
+  if (typeof entityId !== "string" || !entityId.length) return null;
+  return {
+    topic,
+    entityKind: entityKind as EntityKind,
+    entityId,
+    payload: "payload" in o ? o.payload : normalized,
+  };
 }
 
 export async function processInboundWebhook(input: {
@@ -45,8 +65,7 @@ export async function processInboundWebhook(input: {
     (typeof row.config === "object" &&
       row.config !== null &&
       "webhookSecret" in row.config &&
-      typeof (row.config as { webhookSecret?: unknown }).webhookSecret ===
-        "string" &&
+      typeof (row.config as { webhookSecret?: unknown }).webhookSecret === "string" &&
       (row.config as { webhookSecret: string }).webhookSecret) ||
     process.env.WEBHOOK_SIGNATURE_STUB_SECRET ||
     "";
@@ -69,7 +88,8 @@ export async function processInboundWebhook(input: {
     connector.webhooks.extractIdempotencyKey(input.request.headers) ??
     createHash("sha256").update(rawBuf).digest("hex");
 
-  const normalized = connector.webhooks.normalizePayload(safeJson(rawBuf));
+  const normalized = connector.webhooks.normalizePayload(safeJson(rawBuf), input.request.headers);
+  const envelope = parseInboundEnvelope(normalized);
 
   await sql.begin(async (tx) => {
     const { duplicate } = await recordWebhookDelivery(
@@ -79,13 +99,20 @@ export async function processInboundWebhook(input: {
     );
     if (duplicate) return;
 
+    if (!envelope) {
+      return;
+    }
+
     await enqueueJson(tx as unknown as import("postgres").Sql, PGMQ_QUEUES.inbound, {
       platform: input.platform,
       connectorId: row.id,
       tenantId: row.tenant_id,
       deliveryId,
       receivedAt: new Date().toISOString(),
-      payload: normalized,
+      topic: envelope.topic,
+      entityKind: envelope.entityKind,
+      entityId: envelope.entityId,
+      payload: envelope.payload,
     });
   });
 

@@ -133,6 +133,26 @@ export interface Database {
         };
         Relationships: [];
       };
+      connector_cursors: {
+        Row: {
+          connector_id: string;
+          entity_kind: string;
+          cursor: string;
+          updated_at: string;
+        };
+        Insert: {
+          connector_id: string;
+          entity_kind: string;
+          cursor: string;
+          updated_at?: string;
+        };
+        Update: {
+          entity_kind?: string;
+          cursor?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       sync_logs: {
         Row: {
           id: string;

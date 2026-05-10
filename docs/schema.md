@@ -19,6 +19,9 @@ Maintained alongside SQL migrations in `db/migrations/`. Regenerate/extend this 
 | `dead_letter_jobs` | Poison messages for replay UI (Phase 8). |
 | `suppression_window` | Loop prevention: ignore inbound writes until `until`. |
 | `content_hashes` | Loop prevention: skip when payload hash unchanged. |
+| `connector_cursors` | One row per connector (`entity_kind` + opaque `cursor` token for polling — Woo `modified_after` baseline). |
+
+**Indexes:** `entity_links_pair_kind_source_idx` unique on `(pair_id, entity_kind, source_id)` supports idempotent upserts from inbound workers.
 
 ## Extensions / queues
 

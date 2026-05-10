@@ -2,11 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import { woocommerceConnector } from "@/connectors/woocommerce";
 import {
-  CONTRACT_VERSION,
   getConnector,
   isContractCompatible,
   listRegisteredKinds,
 } from "@/connectors/registry";
+import { CONTRACT_VERSION } from "@/connectors/_contract/v1";
 
 describe("connector registry", () => {
   it("lists woo + exact stubs", () => {

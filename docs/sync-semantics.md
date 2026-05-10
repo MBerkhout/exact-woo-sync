@@ -12,6 +12,8 @@
 - **Suppression window** — after we write to a platform, ignore inbound events for the same `(connector_id, entity_kind, entity_id)` until `until`.
 - **Content hash** — skip processing when incoming canonical hash matches stored hash.
 
+**WooCommerce outbound:** every successful REST create/update in `connectors/woocommerce/entities/*` calls `markWritten` with a SHA-256 hash of the canonical payload (via `lib/sync/canonicalHash.ts`). Default suppression is **60s**; override with `connectors.config.suppressionMs`. This blocks echoed webhooks after Iski-initiated writes.
+
 Connectors may add synthetic markers in later phases.
 
 ## Idempotency (§9)
@@ -26,4 +28,4 @@ Connectors may add synthetic markers in later phases.
 
 ## Testing
 
-Vitest covers registry/redaction/crypto checksum helpers today; DB-backed loop-guard assertions stay manual until we wire reusable Postgres fixtures in CI.
+Vitest covers registry, redaction, crypto checksum helpers, Woo signature/HTTP/normalize, and a lightweight loop-guard mock. Full pgmq + RLS integration tests remain manual until CI Postgres fixtures land.

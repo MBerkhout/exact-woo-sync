@@ -1,3 +1,4 @@
+import type { CanonicalByKind } from "@/connectors/_contract/entities";
 import type {
   Connector,
   ConnectorManifest,
@@ -40,7 +41,8 @@ const webhooks: WebhookHandlers = {
   async verifySignature() {
     return true;
   },
-  normalizePayload(rawBody: unknown) {
+  normalizePayload(rawBody: unknown, _headers: Headers) {
+    void _headers;
     return rawBody;
   },
   extractIdempotencyKey(headers: Headers) {
@@ -54,17 +56,19 @@ const http: RateLimitedClient = {
   },
 };
 
-const stubEntityOps: EntityOps = {
-  async fetch() {
-    notImplemented();
-  },
-  async create() {
-    notImplemented();
-  },
-  async update() {
-    notImplemented();
-  },
-};
+function stubEntityOps<K extends keyof CanonicalByKind>(): EntityOps<CanonicalByKind[K]> {
+  return {
+    async fetch() {
+      notImplemented();
+    },
+    async create() {
+      notImplemented();
+    },
+    async update() {
+      notImplemented();
+    },
+  };
+}
 
 export const exactOnlineConnector: Connector = {
   manifest,
@@ -81,11 +85,11 @@ export const exactOnlineConnector: Connector = {
   webhooks,
   http,
   entities: {
-    order: stubEntityOps,
-    product: stubEntityOps,
-    customer: stubEntityOps,
-    stock: stubEntityOps,
-    price: stubEntityOps,
-    refund: stubEntityOps,
+    order: stubEntityOps<"order">(),
+    product: stubEntityOps<"product">(),
+    customer: stubEntityOps<"customer">(),
+    stock: stubEntityOps<"stock">(),
+    price: stubEntityOps<"price">(),
+    refund: stubEntityOps<"refund">(),
   },
 };

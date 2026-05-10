@@ -2,6 +2,10 @@
  * Versioned connector interface contract (§4).
  * Bump CONTRACT_VERSION when breaking changes require connector updates.
  */
+import type { CanonicalByKind } from "@/connectors/_contract/entities";
+
+export type { CanonicalByKind } from "@/connectors/_contract/entities";
+
 export const CONTRACT_VERSION = "1.0.0";
 
 export type EntityKind =
@@ -52,7 +56,7 @@ export interface WebhookHandlers {
     headers: Headers;
     secret: string;
   }): Promise<boolean>;
-  normalizePayload(rawBody: unknown): unknown;
+  normalizePayload(rawBody: unknown, headers: Headers): unknown;
   extractIdempotencyKey(headers: Headers): string | null;
 }
 
@@ -80,6 +84,6 @@ export interface Connector {
   oauth: OAuthHandlers;
   webhooks: WebhookHandlers;
   http: RateLimitedClient;
-  entities: Partial<Record<EntityKind, EntityOps>>;
+  entities: Partial<{ [K in EntityKind]: EntityOps<CanonicalByKind[K]> }>;
   cursor?: SyncCursorAdapter;
 }
